@@ -5,65 +5,55 @@ import os
 
 st.set_page_config(layout="wide")
 
-#imposta sfondo sempre bianco e testi neri
+# Imposta sfondo bianco e testo nero
 st.markdown("""
-<style>
-/* Sfondo generale bianco e testo nero */
-html, body, [data-testid="stApp"] {
-    background-color: white !important;
-    color: black !important;
-}
-
-/* Titoli, markdown e testi */
-h1, h2, h3, h4, h5, h6, p, span, div, label {
-    color: black !important;
-}
-
-/* Radio button etichette */
-div[data-baseweb="radio"] label {
-    color: black !important;
-    font-weight: 600 !important;
-}
-
-/* Input e selezioni */
-input, textarea, select {
-    background-color: white !important;
-    color: black !important;
-}
-
-/* Pulsanti */
-button[kind="primary"], button[kind="secondary"], .stButton > button {
-    background-color: white !important;
-    color: black !important;
-    border: 1px solid #999 !important;
-    border-radius: 6px;
-}
-
-/* Pulsanti al passaggio del mouse */
-button[kind="primary"]:hover, button[kind="secondary"]:hover, .stButton > button:hover {
-    background-color: #f0f0f0 !important;
-    color: black !important;
-}
-
-/* Dataframe */
-.css-1d391kg, .stDataFrame, .css-1m3z7sd {
-    color: black !important;
-    background-color: white !important;
-}
-
-/* Riduzione padding su mobile */
-@media only screen and (max-width: 768px) {
-    .stRadio > div {
-        flex-direction: row !important;
-        gap: 1rem;
-        justify-content: space-around;
+    <style>
+    /* Sfondo e testo di base */
+    html, body, [data-testid="stApp"] {
+        background-color: white !important;
+        color: black !important;
     }
-    .stRadio label {
-        font-size: 14px !important;
+
+    /* RADIO BUTTON - Forza etichette nere */
+    .stRadio div[role="radiogroup"] label span {
+        color: black !important;
+        font-weight: 500 !important;
     }
-}
-</style>
+
+    /* RADIO BUTTON - Mobile layout più leggibile */
+    @media only screen and (max-width: 768px) {
+        .stRadio > div {
+            flex-direction: row !important;
+            justify-content: space-evenly;
+            gap: 10px;
+        }
+        .stRadio div[role="radiogroup"] label span {
+            font-size: 15px !important;
+        }
+    }
+
+    /* Pulsanti */
+    .stButton > button {
+        background-color: white !important;
+        color: black !important;
+        border: 1px solid #ccc !important;
+        border-radius: 6px !important;
+    }
+    </style>
 """, unsafe_allow_html=True)
+
+# --- Autenticazione per upload file Excel ---
+#st.sidebar.markdown("## 🔒 Area Amministratore")
+#password = st.sidebar.text_input("Inserisci la password per caricare il file", type="password")
+#
+#if password == "Euroirte111927":  # Cambia questa password come preferisci
+#    uploaded_file = st.sidebar.file_uploader("📂 Carica nuovo file 'delivery.xlsx'", type=["xlsx"])
+#    if uploaded_file:
+#        with open("delivery.xlsx", "wb") as f:
+#            f.write(uploaded_file.getbuffer())
+#        st.sidebar.success("✅ File aggiornato correttamente!")
+#else:
+#    st.sidebar.info("Solo gli utenti autorizzati possono aggiornare i dati.")
 
 # --- Titolo ---
 st.title("📊 Avanzamento Produzione Delivery OF - Euroirte s.r.l.")
