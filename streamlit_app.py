@@ -8,37 +8,49 @@ st.set_page_config(layout="wide")
 # Imposta sfondo bianco e testo nero
 st.markdown("""
     <style>
-    /* Sfondo e testo di base */
     html, body, [data-testid="stApp"] {
         background-color: white !important;
         color: black !important;
     }
 
-    /* RADIO BUTTON - Forza etichette nere */
-    .stRadio div[role="radiogroup"] label span {
+    /* Forza colore dei testi nei menu a discesa */
+    .stSelectbox div[data-baseweb="select"] {
+        background-color: white !important;
         color: black !important;
-        font-weight: 500 !important;
     }
 
-    /* RADIO BUTTON - Mobile layout più leggibile */
-    @media only screen and (max-width: 768px) {
-        .stRadio > div {
-            flex-direction: row !important;
-            justify-content: space-evenly;
-            gap: 10px;
-        }
-        .stRadio div[role="radiogroup"] label span {
-            font-size: 15px !important;
-        }
+    .stSelectbox span, .stSelectbox label {
+        color: black !important;
+        font-weight: 500;
+    }
+
+    /* Forza stile nelle tabelle */
+    .stDataFrame, .stDataFrame table, .stDataFrame th, .stDataFrame td {
+        background-color: white !important;
+        color: black !important;
     }
 
     /* Pulsanti */
     .stButton > button {
         background-color: white !important;
         color: black !important;
-        border: 1px solid #ccc !important;
-        border-radius: 6px !important;
+        border: 1px solid #999 !important;
+        border-radius: 6px;
     }
+
+    /* Radio button */
+    div[data-baseweb="radio"] label span {
+        color: black !important;
+        font-weight: 600 !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+    <style>
+        header [data-testid="theme-toggle"] {
+            display: none;
+        }
     </style>
 """, unsafe_allow_html=True)
 
