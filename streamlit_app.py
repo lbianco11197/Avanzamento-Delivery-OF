@@ -7,7 +7,6 @@ st.set_page_config(layout="wide")
 
 # Imposta sfondo bianco e testo nero
 st.markdown("""
-    st.markdown("""
     <style>
     html, body, [data-testid="stApp"], [data-testid="stHeader"], [data-testid="stSidebar"], .stSelectbox, .stDataFrame {
         background-color: white !important;
