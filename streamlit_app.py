@@ -4,11 +4,11 @@ from datetime import datetime
 
 st.set_page_config(layout="wide", page_title="Avanzamento Produzione Delivery - Euroirte s.r.l.")
 
-# --- Stili base chiari ---
+# --- Stili base ---
 st.markdown("""
     <style>
     html, body, [data-testid="stApp"] { background-color: white !important; color: black !important; }
-    .stButton > button, .stLinkButton > a, .stDownloadButton > button { background-color: white !important; color: black !important; border: 1px solid #ccc !important; border-radius: 6px !important; }
+    .stButton > button, .stLinkButton > a { background-color: white !important; color: black !important; border: 1px solid #ccc !important; border-radius: 6px !important; }
     .stRadio div[role="radiogroup"] label span { color: black !important; font-weight: 500 !important; }
     </style>
 """, unsafe_allow_html=True)
@@ -26,46 +26,20 @@ st.caption(
     "Target semaforo 75%."
 )
 
-# --- Caricamento dati dal repo ---
+# --- Caricamento dati dal file nel repo ---
 def load_data():
-    df_raw = pd.read_excel("deliveryopenfiber.xlsx")
-
-    # Mappa nomi colonne reali -> standard
-    col_map = {}
-
-    # Data Chiusura
-    for c in df_raw.columns:
-        if c.strip().lower() == "data chiusura":
-            col_map[c] = "Data"
-            break
-
-    # Tecnico
-    for cand in ["Tecnico (TechnicianName)", "TechnicianName", "Tecnico"]:
-        if cand in df_raw.columns:
-            col_map[cand] = "Tecnico"
-            break
-
-    # Stato / Descrizione
-    if "Stato" in df_raw.columns:
-        col_map["Stato"] = "Stato"
-    if "Descrizione" in df_raw.columns:
-        col_map["Descrizione"] = "Descrizione"
-
-    missing = {"Data", "Tecnico", "Stato", "Descrizione"} - set(col_map.values())
-    if missing:
-        st.error("Colonne mancanti nel file Excel: " + ", ".join(sorted(missing)))
-        st.stop()
-
-    df = df_raw.rename(columns=col_map)[["Data", "Tecnico", "Stato", "Descrizione"]]
-
-    # Solo Attivazione con Appuntamento
+    df = pd.read_excel(
+        "deliveryopenfiber.xlsx",
+        usecols=["Data Chiusura", "Tecnico (TechnicianName)", "Stato", "Descrizione"]
+    )
+    df = df.rename(columns={
+        "Data Chiusura": "Data",
+        "Tecnico (TechnicianName)": "Tecnico"
+    })
     df = df[df["Descrizione"] == "Attivazione con Appuntamento"].copy()
-
-    # Parse date (accetta dd/mm/yyyy hh:mm)
     df["Data"] = pd.to_datetime(df["Data"], errors="coerce", dayfirst=True)
     df = df.dropna(subset=["Data"])
     df["DataStr"] = df["Data"].dt.strftime("%d/%m/%Y")
-
     mesi_italiani = {
         1: "Gennaio", 2: "Febbraio", 3: "Marzo", 4: "Aprile",
         5: "Maggio", 6: "Giugno", 7: "Luglio", 8: "Agosto",
@@ -76,12 +50,12 @@ def load_data():
 
 df = load_data()
 if df.empty:
-    st.warning("Nessuna riga valida trovata. Verifica che 'Descrizione' sia 'Attivazione con Appuntamento'.")
+    st.warning("Nessuna riga valida trovata.")
     st.stop()
 
 st.markdown(f"🗓️ **Dati aggiornati al:** {df['Data'].max().strftime('%d/%m/%Y')}")
 
-# --- Filtri (mese/giorno/tecnico) ---
+# --- Filtri ---
 ordine_mesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
                "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"]
 mesi_presenti = [m for m in ordine_mesi if m in df["MeseNome"].unique()]
@@ -93,14 +67,12 @@ tmese = r1c1.selectbox("📆 Seleziona un mese", ["Tutti"] + mesi_presenti)
 df_tmp = df if tmese == "Tutti" else df[df["MeseNome"] == tmese]
 
 giorni = ["Tutti"] + sorted(
-    pd.Series(df_tmp["DataStr"]).dropna().unique(),
+    df_tmp["DataStr"].dropna().unique(),
     key=lambda x: datetime.strptime(x, "%d/%m/%Y")
 )
 giorno_sel = r1c2.selectbox("📆 Seleziona un giorno", giorni)
 
-# >>> FIX qui: forziamo una Series e puliamo i NaN
-tec_series = pd.Series(df_tmp["Tecnico"], dtype="object")
-tecnici = ["Tutti"] + sorted(tec_series.dropna().astype(str).unique())
+tecnici = ["Tutti"] + sorted(df_tmp["Tecnico"].dropna().unique())
 tecnico_sel = r2c1.selectbox("🧑‍🔧 Seleziona un tecnico", tecnici)
 
 # --- Applica filtri ---
@@ -113,12 +85,11 @@ if tecnico_sel != "Tutti":
     df_filtrato = df_filtrato[df_filtrato["Tecnico"] == tecnico_sel]
 
 # --- Aggregazione ---
-def aggrega(df_in: pd.DataFrame, group_cols):
+def aggrega(df_in, group_cols):
     if df_in.empty:
         return pd.DataFrame(columns=["Data", "Tecnico", "Impianti gestiti", "Impianti espletati", "Resa"])
     g = df_in.groupby(group_cols)
-
-    def calc(grp: pd.DataFrame):
+    def calc(grp):
         gestiti = len(grp)
         espletati = (grp["Stato"] == "Espletamento OK").sum()
         resa = (espletati / gestiti * 100) if gestiti else None
@@ -127,14 +98,9 @@ def aggrega(df_in: pd.DataFrame, group_cols):
             "Impianti espletati": espletati,
             "Resa": resa
         })
-
     out = g.apply(calc).reset_index()
-
-    # Data in formato gg/mm/aaaa se datetime
     if "Data" in out.columns and pd.api.types.is_datetime64_any_dtype(out["Data"]):
         out["Data"] = out["Data"].dt.strftime("%d/%m/%Y")
-
-    out = out[["Data", "Tecnico", "Impianti gestiti", "Impianti espletati", "Resa"]]
     out["Impianti gestiti"] = out["Impianti gestiti"].astype("Int64")
     out["Impianti espletati"] = out["Impianti espletati"].astype("Int64")
     out["Resa"] = out["Resa"].round(0)
