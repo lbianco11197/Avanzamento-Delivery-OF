@@ -28,38 +28,40 @@ st.caption(
 
 # --- Caricamento dati dal repo ---
 def load_data():
-    # Leggo tutto e poi normalizzo, per tollerare i nomi effettivi del file
-    df = pd.read_excel("deliveryopenfiber.xlsx")
+    df_raw = pd.read_excel("deliveryopenfiber.xlsx")
 
-    # Mappatura colonne possibili -> standard
+    # Mappa nomi colonne reali -> standard
     col_map = {}
+
     # Data Chiusura
-    for c in df.columns:
+    for c in df_raw.columns:
         if c.strip().lower() == "data chiusura":
             col_map[c] = "Data"
             break
-    # Tecnico (preferenza su 'Tecnico (TechnicianName)', fallback 'TechnicianName' o 'Tecnico')
-    tech_candidates = ["Tecnico (TechnicianName)", "TechnicianName", "Tecnico"]
-    for cand in tech_candidates:
-        if cand in df.columns:
+
+    # Tecnico
+    for cand in ["Tecnico (TechnicianName)", "TechnicianName", "Tecnico"]:
+        if cand in df_raw.columns:
             col_map[cand] = "Tecnico"
             break
+
     # Stato / Descrizione
-    for name in ["Stato", "Descrizione"]:
-        if name in df.columns:
-            col_map[name] = name
+    if "Stato" in df_raw.columns:
+        col_map["Stato"] = "Stato"
+    if "Descrizione" in df_raw.columns:
+        col_map["Descrizione"] = "Descrizione"
 
     missing = {"Data", "Tecnico", "Stato", "Descrizione"} - set(col_map.values())
     if missing:
-        st.error(f"Colonne mancanti nel file Excel: {', '.join(sorted(missing))}")
+        st.error("Colonne mancanti nel file Excel: " + ", ".join(sorted(missing)))
         st.stop()
 
-    df = df.rename(columns=col_map)[["Data", "Tecnico", "Stato", "Descrizione"]]
+    df = df_raw.rename(columns=col_map)[["Data", "Tecnico", "Stato", "Descrizione"]]
 
     # Solo Attivazione con Appuntamento
     df = df[df["Descrizione"] == "Attivazione con Appuntamento"].copy()
 
-    # Parse date (supporta stringhe 'dd/mm/yyyy hh:mm')
+    # Parse date (accetta dd/mm/yyyy hh:mm)
     df["Data"] = pd.to_datetime(df["Data"], errors="coerce", dayfirst=True)
     df = df.dropna(subset=["Data"])
     df["DataStr"] = df["Data"].dt.strftime("%d/%m/%Y")
@@ -90,10 +92,15 @@ r2c1, = st.columns(1)
 tmese = r1c1.selectbox("📆 Seleziona un mese", ["Tutti"] + mesi_presenti)
 df_tmp = df if tmese == "Tutti" else df[df["MeseNome"] == tmese]
 
-giorni = ["Tutti"] + sorted(df_tmp["DataStr"].dropna().unique(), key=lambda x: datetime.strptime(x, "%d/%m/%Y"))
+giorni = ["Tutti"] + sorted(
+    pd.Series(df_tmp["DataStr"]).dropna().unique(),
+    key=lambda x: datetime.strptime(x, "%d/%m/%Y")
+)
 giorno_sel = r1c2.selectbox("📆 Seleziona un giorno", giorni)
 
-tecnici = ["Tutti"] + sorted(df_tmp["Tecnico"].dropna().unique())
+# >>> FIX qui: forziamo una Series e puliamo i NaN
+tec_series = pd.Series(df_tmp["Tecnico"], dtype="object")
+tecnici = ["Tutti"] + sorted(tec_series.dropna().astype(str).unique())
 tecnico_sel = r2c1.selectbox("🧑‍🔧 Seleziona un tecnico", tecnici)
 
 # --- Applica filtri ---
@@ -123,7 +130,7 @@ def aggrega(df_in: pd.DataFrame, group_cols):
 
     out = g.apply(calc).reset_index()
 
-    # Data in formato gg/mm/aaaa se datetime; altrimenti (riepilogo mensile) è già stringa mese
+    # Data in formato gg/mm/aaaa se datetime
     if "Data" in out.columns and pd.api.types.is_datetime64_any_dtype(out["Data"]):
         out["Data"] = out["Data"].dt.strftime("%d/%m/%Y")
 
