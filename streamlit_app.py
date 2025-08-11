@@ -7,35 +7,18 @@ st.set_page_config(layout="wide")
 
 st.markdown("""
 <style>
-/* Forza bianco/nero ovunque, ignorando dark mode */
-html, body, [data-testid="stApp"], [data-testid="stAppViewContainer"],
-[data-testid="stHeader"], [data-testid="stSidebar"], [class^="st-"],
-.stMarkdown, .stMarkdown p, .stDataFrame, .stDataFrame * {
-    background-color: #FFFFFF !important;
-    color: #000000 !important;
+/* Forza SOLO i contenitori principali in tema chiaro */
+:root { color-scheme: light !important; }
+html, body,
+[data-testid="stApp"],
+[data-testid="stAppViewContainer"],
+[data-testid="stHeader"],
+[data-testid="stSidebar"] {
+  background-color: #FFFFFF !important;
+  color: #000000 !important;
 }
 
-/* Tabelle e celle */
-table, th, td {
-    background-color: #FFFFFF !important;
-    color: #000000 !important;
-    border-color: #DDDDDD !important;
-}
-
-/* Input, select, bottoni */
-input, select, textarea, button {
-    background-color: #FFFFFF !important;
-    color: #000000 !important;
-    border: 1px solid #CCCCCC !important;
-}
-
-/* Blocca la preferenza di sistema dark */
-@media (prefers-color-scheme: dark) {
-    html, body {
-        background-color: #FFFFFF !important;
-        color: #000000 !important;
-    }
-}
+/* Non toccare gli elementi delle tabelle generate da pandas Styler */
 </style>
 """, unsafe_allow_html=True)
 
@@ -138,6 +121,7 @@ styled_giornaliero = (
     df_giornaliero.style
     .applymap(lambda v: "background-color: #ccffcc" if pd.notna(v) and v >= 75 else ("background-color: #ff9999" if pd.notna(v) and v < 75 else ""), subset=["Resa"])
     .format({"Resa": "{:.0f}%"})
+    .set_properties(**{"color": "#000000"})   # <<< testo nero
     .hide(axis="index")
 )
 st.dataframe(styled_giornaliero, use_container_width=True)
@@ -151,6 +135,7 @@ styled_mensile = (
     df_mensile.style
     .applymap(lambda v: "background-color: #ccffcc" if pd.notna(v) and v >= 75 else ("background-color: #ff9999" if pd.notna(v) and v < 75 else ""), subset=["Resa"])
     .format({"Resa": "{:.0f}%"})
+    .set_properties(**{"color": "#000000"})   # <<< testo nero
     .hide(axis="index")
 )
 st.dataframe(styled_mensile, use_container_width=True)
