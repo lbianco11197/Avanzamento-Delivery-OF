@@ -7,12 +7,17 @@ st.set_page_config(layout="wide")
 
 # Imposta sfondo bianco e testo nero
 st.markdown("""
+    st.markdown("""
     <style>
-    /* Sfondo e testo di base */
-    html, body, [data-testid="stApp"] {
+    html, body, [data-testid="stApp"], [data-testid="stHeader"], [data-testid="stSidebar"], .stSelectbox, .stDataFrame {
         background-color: white !important;
         color: black !important;
     }
+    * {
+        color: black !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
     /* RADIO BUTTON - Forza etichette nere */
     .stRadio div[role="radiogroup"] label span {
