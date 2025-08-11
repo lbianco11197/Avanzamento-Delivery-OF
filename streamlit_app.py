@@ -35,43 +35,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Imposta sfondo bianco e testo nero
-st.markdown("""
-    <style>
-    /* Sfondo e testo di base */
-    html, body, [data-testid="stApp"] {
-        background-color: white !important;
-        color: black !important;
-    }
-
-    /* RADIO BUTTON - Forza etichette nere */
-    .stRadio div[role="radiogroup"] label span {
-        color: black !important;
-        font-weight: 500 !important;
-    }
-
-    /* RADIO BUTTON - Mobile layout più leggibile */
-    @media only screen and (max-width: 768px) {
-        .stRadio > div {
-            flex-direction: row !important;
-            justify-content: space-evenly;
-            gap: 10px;
-        }
-        .stRadio div[role="radiogroup"] label span {
-            font-size: 15px !important;
-        }
-    }
-
-    /* Pulsanti */
-    .stButton > button {
-        background-color: white !important;
-        color: black !important;
-        border: 1px solid #ccc !important;
-        border-radius: 6px !important;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
 
 # --- Titolo ---
 st.title("📊 Avanzamento Produzione Delivery OF - Euroirte s.r.l.")
