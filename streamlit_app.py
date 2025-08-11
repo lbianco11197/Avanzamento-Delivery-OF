@@ -7,40 +7,47 @@ st.set_page_config(layout="wide")
 
 st.markdown("""
 <style>
-/* Contenitori principali in tema chiaro */
+/* Contenitori principali in chiaro */
 :root, html, body,
 [data-testid="stApp"], [data-testid="stAppViewContainer"],
-[data-testid="stHeader"], [data-testid="stSidebar"] {
-  background: #FFFFFF !important;
-  color: black !important;
-  color-scheme: light !important;  /* <- iOS/Safari */
+[data-testid="stHeader"], [data-testid="stSidebar"]{
+  background:#FFFFFF !important;
+  color:#000000 !important;
+  color-scheme: light !important; /* iOS */
 }
 
-/* iOS/Safari: forza i controlli (select/input) in chiaro */
+/* Forza il COLORE DEL TESTO a nero in tutta l'app (senza toccare layout) */
+[data-testid="stApp"] p,
+[data-testid="stApp"] span,
+[data-testid="stApp"] label,
+[data-testid="stApp"] div,
+[data-testid="stApp"] th,
+[data-testid="stApp"] td,
+[data-testid="stApp"] li,
+[data-testid="stApp"] strong,
+[data-testid="stApp"] em {
+  color:#000000 !important;
+}
+
+/* Input / select / button */
 input, textarea, select, button,
 [data-testid="stSelectbox"] *, 
 [data-testid="stMultiSelect"] *,
 [data-testid="stDateInput"] * {
+  background:#FFFFFF !important;
+  color:#000000 !important;
+  border-color:#DDDDDD !important;
   color-scheme: light !important;
-  background: #FFFFFF !important;
-  color: black !important;
-  border-color: #DDDDDD !important;
 }
 
-/* Tabelle pandas Styler */
+/* DataFrame / tabelle */
 [data-testid="stStyledTable"] table,
 [data-testid="stStyledTable"] th,
-[data-testid="stStyledTable"] td {
-  background: #FFFFFF !important;
-  color: black !important;
-  border-color: #E5E7EB !important;
-}
-
-/* Dataframe (nuove versioni) */
-[data-testid="stDataFrame"] div {
-  color-scheme: light !important;
-  background: #FFFFFF !important;
-  color: black !important;
+[data-testid="stStyledTable"] td,
+[data-testid="stDataFrame"] * {
+  background:#FFFFFF !important;
+  color:#000000 !important;
+  border-color:#E5E7EB !important;
 }
 </style>
 """, unsafe_allow_html=True)
