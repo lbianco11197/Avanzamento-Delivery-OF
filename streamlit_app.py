@@ -18,13 +18,6 @@ st.title("📊 Avanzamento Produzione Delivery OF - Euroirte s.r.l.")
 st.image("LogoEuroirte.jpg", width=180)
 st.link_button("🏠 Torna alla Home", url="https://homeeuroirte.streamlit.app/")
 
-st.caption(
-    "Fonte: **deliveryopenfiber.xlsx** — Considera **solo** le righe con "
-    "`Descrizione = Attivazione con Appuntamento`. "
-    "• **Impianti gestiti** = totale attività per Tecnico • "
-    "**Impianti espletati** = quante con `Stato = Espletamento OK` • "
-    "Target semaforo 75%."
-)
 
 # --- Caricamento dati dal file nel repo ---
 def load_data():
