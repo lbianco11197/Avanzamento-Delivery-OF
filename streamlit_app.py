@@ -5,41 +5,34 @@ import os
 
 st.set_page_config(layout="wide")
 
-st.markdown("""
-<style>
-/* 1) Forza schema chiaro per iOS/Safari */
-:root{
-  color-scheme: light !important;
+from streamlit.components.v1 import html
 
-  /* 2) Override delle variabili colore usate da Streamlit */
-  --text-color: #000000 !important;
-  --secondary-text-color: #000000 !important;
-  --body-text-color: #000000 !important;
-  --heading-color: #000000 !important;
-  --link-color: #000000 !important;
-  --fgColor: #000000 !important;
-  --text-on-primary: #000000 !important;
-}
-
-/* 3) Mantieni sfondi chiari dei contenitori principali */
-html, body,
-[data-testid="stApp"], [data-testid="stAppViewContainer"],
-[data-testid="stHeader"], [data-testid="stSidebar"]{
-  background:#FFFFFF !important;
-}
-
-/* 4) Forza SOLO il testo a nero ovunque (niente background qui) */
-[data-testid="stApp"] *{
-  color:#000000 !important;
-}
-
-/* 5) Controlli input/select su iOS */
-input, textarea, select, button{
-  color:#000000 !important;
-  color-scheme: light !important;
-}
-</style>
-""", unsafe_allow_html=True)
+# Impone ?theme=light e ripulisce eventuali preferenze "dark" salvate
+html("""
+<script>
+(function(){
+  try {
+    const url = new URL(window.location);
+    if (url.searchParams.get('theme') !== 'light') {
+      url.searchParams.set('theme', 'light');
+      window.location.replace(url.toString());
+      return;
+    }
+    // Pulisci preferenze locali che potrebbero forzare il dark
+    const keys = ["theme","stThemePreference","st-theme"];
+    let changed = false;
+    keys.forEach(k=>{
+      const v = localStorage.getItem(k);
+      if (v && /dark/i.test(v)) { localStorage.setItem(k, '"light"'); changed = true; }
+    });
+    if (changed && !sessionStorage.getItem("forcedLightOnce")) {
+      sessionStorage.setItem("forcedLightOnce","1");
+      location.reload();
+    }
+  } catch(e){}
+})();
+</script>
+""", height=0)
 
 # --- Titolo ---
 st.title("📊 Avanzamento Produzione Delivery OF - Euroirte s.r.l.")
