@@ -5,20 +5,53 @@ import os
 
 st.set_page_config(layout="wide")
 
+from streamlit.components.v1 import html
+
+html("""
+<script>
+(function(){
+  try {
+    // 1) Forza ?theme=light nell'URL (vale anche su mobile)
+    const u = new URL(window.location);
+    if (u.searchParams.get('theme') !== 'light') {
+      u.searchParams.set('theme', 'light');
+      return window.location.replace(u.toString());
+    }
+
+    // 2) Ripulisce preferenze salvate in localStorage che impongono dark
+    const keys = ["theme", "stThemePreference", "st-dark-mode", "st-theme"];
+    let changed = false;
+    keys.forEach(k => {
+      const v = localStorage.getItem(k);
+      if (v && /dark/i.test(v)) {
+        localStorage.setItem(k, '"light"'); // valore semplice
+        changed = true;
+      }
+    });
+    // imposta anche un payload possibile usato da Streamlit: {"base":"light"}
+    localStorage.setItem("theme", JSON.stringify({base:"light"}));
+    localStorage.setItem("stThemePreference", '"light"');
+
+    // 3) Forza l'attributo data-base-theme sul DOM (override immediato)
+    document.documentElement.setAttribute("data-base-theme","light");
+
+    // 4) Ricarica una sola volta se abbiamo cambiato preferenze
+    if (changed && !sessionStorage.getItem("forcedLightOnce")) {
+      sessionStorage.setItem("forcedLightOnce","1");
+      return location.reload();
+    }
+  } catch(e) {}
+})();
+</script>
+""", height=0)
+
 st.markdown("""
 <style>
-/* Forza SOLO i contenitori principali in tema chiaro */
 :root { color-scheme: light !important; }
-html, body,
-[data-testid="stApp"],
-[data-testid="stAppViewContainer"],
-[data-testid="stHeader"],
-[data-testid="stSidebar"] {
-  background-color: #FFFFFF !important;
-  color: #000000 !important;
+html, body, [data-testid="stApp"], [data-testid="stAppViewContainer"],
+[data-testid="stHeader"], [data-testid="stSidebar"] {
+  background:#FFF !important; color:#000 !important;
 }
-
-/* Non toccare gli elementi delle tabelle generate da pandas Styler */
 </style>
 """, unsafe_allow_html=True)
 
