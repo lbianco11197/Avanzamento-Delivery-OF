@@ -5,6 +5,30 @@ import os
 
 st.set_page_config(layout="wide")
 
+from streamlit.components.v1 import html
+
+# Forza tema "light" nella preferenza locale dell’utente (anche su mobile)
+html("""
+<script>
+try {
+  const keys = ["stThemePreference", "theme"];  // versioni diverse di Streamlit
+  let changed = false;
+  keys.forEach(k => {
+    const v = localStorage.getItem(k);
+    if (v !== '"light"' && v !== 'light') {
+      localStorage.setItem(k, '"light"');
+      changed = true;
+    }
+  });
+  // ricarica una sola volta per applicare il tema
+  if (changed && !sessionStorage.getItem("forcedLightOnce")) {
+    sessionStorage.setItem("forcedLightOnce", "1");
+    location.reload();
+  }
+} catch(e) { /* ignore */ }
+</script>
+""", height=0)
+
 # Imposta sfondo bianco e testo nero
 st.markdown("""
     <style>
