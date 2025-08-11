@@ -7,27 +7,33 @@ st.set_page_config(layout="wide")
 
 from streamlit.components.v1 import html
 
-# Forza tema "light" nella preferenza locale dell’utente (anche su mobile)
-html("""
-<script>
-try {
-  const keys = ["stThemePreference", "theme"];  // versioni diverse di Streamlit
-  let changed = false;
-  keys.forEach(k => {
-    const v = localStorage.getItem(k);
-    if (v !== '"light"' && v !== 'light') {
-      localStorage.setItem(k, '"light"');
-      changed = true;
-    }
-  });
-  // ricarica una sola volta per applicare il tema
-  if (changed && !sessionStorage.getItem("forcedLightOnce")) {
-    sessionStorage.setItem("forcedLightOnce", "1");
-    location.reload();
+st.markdown("""
+<style>
+/* Evita che il tema di sistema scuro prevalga */
+:root { color-scheme: light !important; }
+
+/* Se Streamlit attiva il tema dark, sovrascrivi tutto in bianco/nero */
+[data-base-theme="dark"],
+@media (prefers-color-scheme: dark) {
+  html, body, [data-testid="stApp"], 
+  [data-testid="stAppViewContainer"], 
+  [data-testid="stHeader"], 
+  [data-testid="stSidebar"],
+  .stSelectbox div, .stMultiSelect div, .stTextInput div, .stTextArea div,
+  .stDataFrame, .stDataFrame * ,
+  .stButton > button, .stDownloadButton > button, .stLinkButton > a {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+    border-color: #DDDDDD !important;
   }
-} catch(e) { /* ignore */ }
-</script>
-""", height=0)
+  /* righe/tabella */
+  [data-testid="stStyledTable"] {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+  }
+}
+</style>
+""", unsafe_allow_html=True)
 
 # Imposta sfondo bianco e testo nero
 st.markdown("""
