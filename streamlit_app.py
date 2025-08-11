@@ -5,22 +5,39 @@ import os
 
 st.set_page_config(layout="wide")
 
-from streamlit.components.v1 import html
+st.markdown("""
+<style>
+/* Forza bianco/nero ovunque, ignorando dark mode */
+html, body, [data-testid="stApp"], [data-testid="stAppViewContainer"],
+[data-testid="stHeader"], [data-testid="stSidebar"], [class^="st-"],
+.stMarkdown, .stMarkdown p, .stDataFrame, .stDataFrame * {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+}
 
-# Forza il parametro ?theme=light in URL (vale anche su mobile)
-html("""
-<script>
-(function() {
-  try {
-    const url = new URL(window.location);
-    if (url.searchParams.get('theme') !== 'light') {
-      url.searchParams.set('theme', 'light');
-      window.location.replace(url.toString());
+/* Tabelle e celle */
+table, th, td {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+    border-color: #DDDDDD !important;
+}
+
+/* Input, select, bottoni */
+input, select, textarea, button {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+    border: 1px solid #CCCCCC !important;
+}
+
+/* Blocca la preferenza di sistema dark */
+@media (prefers-color-scheme: dark) {
+    html, body {
+        background-color: #FFFFFF !important;
+        color: #000000 !important;
     }
-  } catch (e) {}
-})();
-</script>
-""", height=0)
+}
+</style>
+""", unsafe_allow_html=True)
 
 
 # --- Titolo ---
