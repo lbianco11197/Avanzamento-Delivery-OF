@@ -18,7 +18,7 @@ st.title("📊 Avanzamento Produzione Delivery OF - Euroirte s.r.l.")
 st.image("LogoEuroirte.jpg", width=180)
 st.link_button("🏠 Torna alla Home", url="https://homeeuroirte.streamlit.app/")
 
-#st.caption(
+st.caption(
     "Fonte: **deliveryopenfiber.xlsx** — Considera **solo** le righe con "
     "`Descrizione = Attivazione con Appuntamento`. "
     "• **Impianti gestiti** = totale attività per Tecnico • "
