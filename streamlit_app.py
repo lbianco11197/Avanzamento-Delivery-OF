@@ -7,51 +7,39 @@ st.set_page_config(layout="wide")
 
 st.markdown("""
 <style>
-/* Contenitori principali in chiaro */
-:root, html, body,
+/* 1) Forza schema chiaro per iOS/Safari */
+:root{
+  color-scheme: light !important;
+
+  /* 2) Override delle variabili colore usate da Streamlit */
+  --text-color: #000000 !important;
+  --secondary-text-color: #000000 !important;
+  --body-text-color: #000000 !important;
+  --heading-color: #000000 !important;
+  --link-color: #000000 !important;
+  --fgColor: #000000 !important;
+  --text-on-primary: #000000 !important;
+}
+
+/* 3) Mantieni sfondi chiari dei contenitori principali */
+html, body,
 [data-testid="stApp"], [data-testid="stAppViewContainer"],
 [data-testid="stHeader"], [data-testid="stSidebar"]{
   background:#FFFFFF !important;
-  color:#000000 !important;
-  color-scheme: light !important; /* iOS */
 }
 
-/* Forza il COLORE DEL TESTO a nero in tutta l'app (senza toccare layout) */
-[data-testid="stApp"] p,
-[data-testid="stApp"] span,
-[data-testid="stApp"] label,
-[data-testid="stApp"] div,
-[data-testid="stApp"] th,
-[data-testid="stApp"] td,
-[data-testid="stApp"] li,
-[data-testid="stApp"] strong,
-[data-testid="stApp"] em {
+/* 4) Forza SOLO il testo a nero ovunque (niente background qui) */
+[data-testid="stApp"] *{
   color:#000000 !important;
 }
 
-/* Input / select / button */
-input, textarea, select, button,
-[data-testid="stSelectbox"] *, 
-[data-testid="stMultiSelect"] *,
-[data-testid="stDateInput"] * {
-  background:#FFFFFF !important;
+/* 5) Controlli input/select su iOS */
+input, textarea, select, button{
   color:#000000 !important;
-  border-color:#DDDDDD !important;
   color-scheme: light !important;
-}
-
-/* DataFrame / tabelle */
-[data-testid="stStyledTable"] table,
-[data-testid="stStyledTable"] th,
-[data-testid="stStyledTable"] td,
-[data-testid="stDataFrame"] * {
-  background:#FFFFFF !important;
-  color:#000000 !important;
-  border-color:#E5E7EB !important;
 }
 </style>
 """, unsafe_allow_html=True)
-
 
 # --- Titolo ---
 st.title("📊 Avanzamento Produzione Delivery OF - Euroirte s.r.l.")
