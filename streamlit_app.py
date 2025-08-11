@@ -43,14 +43,22 @@ st.markdown("""
         color: black !important;
         font-weight: 600 !important;
     }
-    </style>
-""", unsafe_allow_html=True)
 
-st.markdown("""
-    <style>
-        header [data-testid="theme-toggle"] {
-            display: none;
-        }
+    /* Testo in generale */
+    [data-testid="stText"], [data-testid="stMarkdownContainer"], [data-testid="stHeader"] h1, [data-testid="stHeader"] h2, [data-testid="stHeader"] h3, [data-testid="stHeader"] h4, [data-testid="stHeader"] h5, [data-testid="stHeader"] h6 {
+        color: black !important;
+    }
+
+    /* Aggiunta per il tema scuro */
+    .stApp {
+        background-color: white;
+        color: black;
+    }
+
+    .st-emotion-cache-1c99r31 { /* Selettore per sidebar e altri elementi */
+         background-color: white !important;
+    }
+
     </style>
 """, unsafe_allow_html=True)
 
