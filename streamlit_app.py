@@ -124,7 +124,7 @@ def aggrega(df_in: pd.DataFrame, group_cols):
     out = g.apply(calc).reset_index()
 
     # Data in formato gg/mm/aaaa se datetime; altrimenti (riepilogo mensile) è già stringa mese
-    if "Data" in out.columns and pd.api.types.is_datetime64_any_dtype(out["Data"]]):
+    if "Data" in out.columns and pd.api.types.is_datetime64_any_dtype(out["Data"]):
         out["Data"] = out["Data"].dt.strftime("%d/%m/%Y")
 
     out = out[["Data", "Tecnico", "Impianti gestiti", "Impianti espletati", "Resa"]]
