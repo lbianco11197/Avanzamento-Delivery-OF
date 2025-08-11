@@ -26,22 +26,44 @@ st.caption(
     "Target semaforo 75%."
 )
 
-# --- Caricamento dati dal file nel repo ---
+# --- Caricamento dati dal repo ---
 def load_data():
-    df = pd.read_excel(
-        "deliveryopenfiber.xlsx",
-        usecols=["Data Chiusura", "TechnicianName", "Stato", "Descrizione"]
-    )
-    df = df.rename(columns={
-        "Data Chiusura": "Data",
-        "TechnicianName": "Tecnico"
-    })
+    # Leggo tutto e poi normalizzo, per tollerare i nomi effettivi del file
+    df = pd.read_excel("deliveryopenfiber.xlsx")
+
+    # Mappatura colonne possibili -> standard
+    col_map = {}
+    # Data Chiusura
+    for c in df.columns:
+        if c.strip().lower() == "data chiusura":
+            col_map[c] = "Data"
+            break
+    # Tecnico (preferenza su 'Tecnico (TechnicianName)', fallback 'TechnicianName' o 'Tecnico')
+    tech_candidates = ["Tecnico (TechnicianName)", "TechnicianName", "Tecnico"]
+    for cand in tech_candidates:
+        if cand in df.columns:
+            col_map[cand] = "Tecnico"
+            break
+    # Stato / Descrizione
+    for name in ["Stato", "Descrizione"]:
+        if name in df.columns:
+            col_map[name] = name
+
+    missing = {"Data", "Tecnico", "Stato", "Descrizione"} - set(col_map.values())
+    if missing:
+        st.error(f"Colonne mancanti nel file Excel: {', '.join(sorted(missing))}")
+        st.stop()
+
+    df = df.rename(columns=col_map)[["Data", "Tecnico", "Stato", "Descrizione"]]
+
     # Solo Attivazione con Appuntamento
     df = df[df["Descrizione"] == "Attivazione con Appuntamento"].copy()
-    # Date
-    df["Data"] = pd.to_datetime(df["Data"], errors="coerce")
+
+    # Parse date (supporta stringhe 'dd/mm/yyyy hh:mm')
+    df["Data"] = pd.to_datetime(df["Data"], errors="coerce", dayfirst=True)
     df = df.dropna(subset=["Data"])
     df["DataStr"] = df["Data"].dt.strftime("%d/%m/%Y")
+
     mesi_italiani = {
         1: "Gennaio", 2: "Febbraio", 3: "Marzo", 4: "Aprile",
         5: "Maggio", 6: "Giugno", 7: "Luglio", 8: "Agosto",
@@ -51,14 +73,13 @@ def load_data():
     return df
 
 df = load_data()
-
 if df.empty:
     st.warning("Nessuna riga valida trovata. Verifica che 'Descrizione' sia 'Attivazione con Appuntamento'.")
     st.stop()
 
 st.markdown(f"🗓️ **Dati aggiornati al:** {df['Data'].max().strftime('%d/%m/%Y')}")
 
-# --- Filtri ---
+# --- Filtri (mese/giorno/tecnico) ---
 ordine_mesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
                "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"]
 mesi_presenti = [m for m in ordine_mesi if m in df["MeseNome"].unique()]
@@ -89,6 +110,7 @@ def aggrega(df_in: pd.DataFrame, group_cols):
     if df_in.empty:
         return pd.DataFrame(columns=["Data", "Tecnico", "Impianti gestiti", "Impianti espletati", "Resa"])
     g = df_in.groupby(group_cols)
+
     def calc(grp: pd.DataFrame):
         gestiti = len(grp)
         espletati = (grp["Stato"] == "Espletamento OK").sum()
@@ -98,9 +120,13 @@ def aggrega(df_in: pd.DataFrame, group_cols):
             "Impianti espletati": espletati,
             "Resa": resa
         })
+
     out = g.apply(calc).reset_index()
-    if "Data" in out.columns and pd.api.types.is_datetime64_any_dtype(out["Data"]):
+
+    # Data in formato gg/mm/aaaa se datetime; altrimenti (riepilogo mensile) è già stringa mese
+    if "Data" in out.columns and pd.api.types.is_datetime64_any_dtype(out["Data"]]):
         out["Data"] = out["Data"].dt.strftime("%d/%m/%Y")
+
     out = out[["Data", "Tecnico", "Impianti gestiti", "Impianti espletati", "Resa"]]
     out["Impianti gestiti"] = out["Impianti gestiti"].astype("Int64")
     out["Impianti espletati"] = out["Impianti espletati"].astype("Int64")
