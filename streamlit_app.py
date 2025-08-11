@@ -12,7 +12,7 @@ st.markdown("""
 [data-testid="stApp"], [data-testid="stAppViewContainer"],
 [data-testid="stHeader"], [data-testid="stSidebar"] {
   background: #FFFFFF !important;
-  color: #000000 !important;
+  color: black !important;
   color-scheme: light !important;  /* <- iOS/Safari */
 }
 
@@ -23,7 +23,7 @@ input, textarea, select, button,
 [data-testid="stDateInput"] * {
   color-scheme: light !important;
   background: #FFFFFF !important;
-  color: #000000 !important;
+  color: black !important;
   border-color: #DDDDDD !important;
 }
 
@@ -32,7 +32,7 @@ input, textarea, select, button,
 [data-testid="stStyledTable"] th,
 [data-testid="stStyledTable"] td {
   background: #FFFFFF !important;
-  color: #000000 !important;
+  color: black !important;
   border-color: #E5E7EB !important;
 }
 
@@ -40,7 +40,7 @@ input, textarea, select, button,
 [data-testid="stDataFrame"] div {
   color-scheme: light !important;
   background: #FFFFFF !important;
-  color: #000000 !important;
+  color: black !important;
 }
 </style>
 """, unsafe_allow_html=True)
