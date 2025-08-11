@@ -3,35 +3,99 @@ import pandas as pd
 from datetime import datetime
 from streamlit.components.v1 import html
 
-st.set_page_config(page_title="Avanzamento Produzione Delivery OF - Euroirte s.r.l.", layout="wide")
-
-# Forza definitivamente il tema light sul client (senza CSS)
+# 1) Prima: ripulisci preferenze "dark" e aggiungi ?theme=light (senza ricarichi infiniti)
 html("""
 <script>
-(function () {
-  try {
-    const u = new URL(window.location);
-    if (u.searchParams.get('theme') !== 'light') {
-      u.searchParams.set('theme', 'light');
-      return window.location.replace(u.toString());
-    }
-    // pulisci preferenze "dark" salvate
-    const keys = ["theme","stThemePreference","st-theme"];
-    let changed = false;
-    keys.forEach(k=>{
-      const v = localStorage.getItem(k);
-      if (v && /dark/i.test(v)) { localStorage.setItem(k, '"light"'); changed = true; }
-    });
-    // applica light in runtime
-    document.documentElement.setAttribute("data-base-theme","light");
-    if (changed && !sessionStorage.getItem("forcedLightOnce")) {
-      sessionStorage.setItem("forcedLightOnce","1");
-      return location.reload();
-    }
-  } catch(e){}
-})();
+try {
+  const u = new URL(window.location);
+  if (u.searchParams.get('theme') !== 'light') {
+    u.searchParams.set('theme', 'light');
+    window.history.replaceState({}, "", u.toString());
+  }
+  // Pulisce preferenze locali che potrebbero imporre il dark
+  ["theme","stThemePreference","st-theme"].forEach(k=>{
+    const v = localStorage.getItem(k);
+    if (v && /dark/i.test(v)) localStorage.setItem(k, '"light"');
+  });
+  // Prova anche a forzare l'attributo usato da Streamlit
+  document.documentElement.setAttribute("data-base-theme","light");
+} catch(e){}
 </script>
 """, height=0)
+
+# 2) Poi: CSS con specificità alta che interviene SOLO quando Streamlit prova a usare "dark"
+st.markdown("""
+<style>
+/* Forza schema chiaro a livello di UA (iOS/Safari onora questo) */
+:root { color-scheme: light !important; }
+
+/* Se Streamlit mette dark, ribaltiamo le sue variabili colore sul chiaro */
+html[data-base-theme="dark"],
+body[data-base-theme="dark"],
+[data-base-theme="dark"] {
+  --background-color: #FFFFFF !important;
+  --secondary-background-color: #FFFFFF !important;
+  --text-color: #000000 !important;
+  --primary-color: #000000 !important;
+  --secondary-text-color: #000000 !important;
+  color-scheme: light !important;
+  background: #FFFFFF !important;
+  color: #000000 !important;
+}
+
+/* Contenitori principali */
+[data-testid="stApp"], 
+[data-testid="stAppViewContainer"],
+[data-testid="stHeader"],
+[data-testid="stSidebar"] {
+  background: #FFFFFF !important;
+  color: #000000 !important;
+}
+
+/* Testo visibile in app (non tocchiamo i background delle celle per non nascondere le tabelle) */
+[data-testid="stApp"] p,
+[data-testid="stApp"] span,
+[data-testid="stApp"] label,
+[data-testid="stApp"] div,
+[data-testid="stApp"] li,
+[data-testid="stApp"] strong,
+[data-testid="stApp"] em,
+[data-testid="stApp"] h1,
+[data-testid="stApp"] h2,
+[data-testid="stApp"] h3,
+[data-testid="stApp"] h4 {
+  color: #000000 !important;
+}
+
+/* Tabelle pandas Styler & DataFrame */
+[data-testid="stStyledTable"] table,
+[data-testid="stStyledTable"] th,
+[data-testid="stStyledTable"] td,
+[data-testid="stDataFrame"] * {
+  color: #000000 !important;
+  background: #FFFFFF !important;
+  border-color: #E5E7EB !important;
+}
+
+/* Select / input (Safari/Chrome mobile spesso li tiene scuri) */
+input, textarea, select, button {
+  background: #FFFFFF !important;
+  color: #000000 !important;
+  border-color: #DDDDDD !important;
+  color-scheme: light !important;
+}
+
+/* Menu a tendina della select (portali fuori dal container) */
+div[role="listbox"],
+div[role="option"] {
+  background: #FFFFFF !important;
+  color: #000000 !important;
+  border-color: #DDDDDD !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+st.set_page_config(page_title="Avanzamento Produzione Delivery OF - Euroirte s.r.l.", layout="wide")
 
 st.title("📊 Avanzamento Produzione Delivery OF - Euroirte s.r.l.")
 st.image("LogoEuroirte.jpg", width=180)
