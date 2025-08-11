@@ -45,16 +45,6 @@ input, textarea, select, button,
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown("""
-<style>
-:root { color-scheme: light !important; }
-html, body, [data-testid="stApp"], [data-testid="stAppViewContainer"],
-[data-testid="stHeader"], [data-testid="stSidebar"] {
-  background:#FFF !important; color:#000 !important;
-}
-</style>
-""", unsafe_allow_html=True)
-
 
 # --- Titolo ---
 st.title("📊 Avanzamento Produzione Delivery OF - Euroirte s.r.l.")
