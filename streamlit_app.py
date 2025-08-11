@@ -1,38 +1,41 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-import os
-
-st.set_page_config(layout="wide")
-
 from streamlit.components.v1 import html
 
-# Impone ?theme=light e ripulisce eventuali preferenze "dark" salvate
+st.set_page_config(page_title="Avanzamento Produzione Delivery OF - Euroirte s.r.l.", layout="wide")
+
+# Forza definitivamente il tema light sul client (senza CSS)
 html("""
 <script>
-(function(){
+(function () {
   try {
-    const url = new URL(window.location);
-    if (url.searchParams.get('theme') !== 'light') {
-      url.searchParams.set('theme', 'light');
-      window.location.replace(url.toString());
-      return;
+    const u = new URL(window.location);
+    if (u.searchParams.get('theme') !== 'light') {
+      u.searchParams.set('theme', 'light');
+      return window.location.replace(u.toString());
     }
-    // Pulisci preferenze locali che potrebbero forzare il dark
+    // pulisci preferenze "dark" salvate
     const keys = ["theme","stThemePreference","st-theme"];
     let changed = false;
     keys.forEach(k=>{
       const v = localStorage.getItem(k);
       if (v && /dark/i.test(v)) { localStorage.setItem(k, '"light"'); changed = true; }
     });
+    // applica light in runtime
+    document.documentElement.setAttribute("data-base-theme","light");
     if (changed && !sessionStorage.getItem("forcedLightOnce")) {
       sessionStorage.setItem("forcedLightOnce","1");
-      location.reload();
+      return location.reload();
     }
   } catch(e){}
 })();
 </script>
 """, height=0)
+
+st.title("📊 Avanzamento Produzione Delivery OF - Euroirte s.r.l.")
+st.image("LogoEuroirte.jpg", width=180)
+st.link_button("🏠 Torna alla Home", url="https://homeeuroirte.streamlit.app/")
 
 # --- Titolo ---
 st.title("📊 Avanzamento Produzione Delivery OF - Euroirte s.r.l.")
@@ -132,7 +135,6 @@ styled_giornaliero = (
     df_giornaliero.style
     .applymap(lambda v: "background-color: #ccffcc" if pd.notna(v) and v >= 75 else ("background-color: #ff9999" if pd.notna(v) and v < 75 else ""), subset=["Resa"])
     .format({"Resa": "{:.0f}%"})
-    .set_properties(**{"color": "#000000"})   # <<< testo nero
     .hide(axis="index")
 )
 st.dataframe(styled_giornaliero, use_container_width=True)
@@ -146,7 +148,6 @@ styled_mensile = (
     df_mensile.style
     .applymap(lambda v: "background-color: #ccffcc" if pd.notna(v) and v >= 75 else ("background-color: #ff9999" if pd.notna(v) and v < 75 else ""), subset=["Resa"])
     .format({"Resa": "{:.0f}%"})
-    .set_properties(**{"color": "#000000"})   # <<< testo nero
     .hide(axis="index")
 )
 st.dataframe(styled_mensile, use_container_width=True)
