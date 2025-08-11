@@ -1,12 +1,6 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-
-st.set_page_config(layout="wide", page_title="Avanzamento Produzione Delivery - Euroirte s.r.l.")
-
-import streamlit as st
-import pandas as pd
-from datetime import datetime
 import os
 
 st.set_page_config(layout="wide")
@@ -48,10 +42,27 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# --- Autenticazione per upload file Excel ---
+#st.sidebar.markdown("## 🔒 Area Amministratore")
+#password = st.sidebar.text_input("Inserisci la password per caricare il file", type="password")
+#
+#if password == "Euroirte111927":  # Cambia questa password come preferisci
+#    uploaded_file = st.sidebar.file_uploader("📂 Carica nuovo file 'delivery.xlsx'", type=["xlsx"])
+#    if uploaded_file:
+#        with open("delivery.xlsx", "wb") as f:
+#            f.write(uploaded_file.getbuffer())
+#        st.sidebar.success("✅ File aggiornato correttamente!")
+#else:
+#    st.sidebar.info("Solo gli utenti autorizzati possono aggiornare i dati.")
 
-# --- Titolo / Branding ---
+# --- Titolo ---
 st.title("📊 Avanzamento Produzione Delivery OF - Euroirte s.r.l.")
+
+# Intestazione con logo e bottone
+# Logo in alto
 st.image("LogoEuroirte.jpg", width=180)
+
+# Bottone sotto il logo
 st.link_button("🏠 Torna alla Home", url="https://homeeuroirte.streamlit.app/")
 
 
