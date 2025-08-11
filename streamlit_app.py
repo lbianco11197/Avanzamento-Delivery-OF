@@ -5,60 +5,40 @@ from streamlit.components.v1 import html
 
 st.set_page_config(layout="wide")
 
-# Imposta sfondo bianco e testo nero
+st.markdown("""
+<style>
+/* Forzare il tema chiaro su tutti gli elementi */
+.stApp, html, body {
+    background-color: white !important;
+    color: black !important;
+}
+
+/* Sovrascritture specifiche per i componenti */
+.st-emotion-cache-1c99r31, .st-emotion-cache-1c99r31 .st-emotion-cache-1v41k6 {
+    background-color: white !important;
+}
+.st-emotion-cache-1c99r31 .st-emotion-cache-1v41k6 .st-emotion-cache-1a6q9k {
+    color: black !important;
+}
+
+/* Selettori più specifici per i componenti del tema scuro */
+[data-theme="dark"] .stApp {
+    background-color: white !important;
+}
+[data-theme="dark"] .st-emotion-cache-1c99r31 {
+    background-color: white !important;
+}
+[data-theme="dark"] [data-testid="stText"], [data-theme="dark"] [data-testid="stMarkdownContainer"] {
+    color: black !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
 st.markdown("""
     <style>
-    html, body, [data-testid="stApp"] {
-        background-color: white !important;
-        color: black !important;
-    }
-
-    /* Forza colore dei testi nei menu a discesa */
-    .stSelectbox div[data-baseweb="select"] {
-        background-color: white !important;
-        color: black !important;
-    }
-
-    .stSelectbox span, .stSelectbox label {
-        color: black !important;
-        font-weight: 500;
-    }
-
-    /* Forza stile nelle tabelle */
-    .stDataFrame, .stDataFrame table, .stDataFrame th, .stDataFrame td {
-        background-color: white !important;
-        color: black !important;
-    }
-
-    /* Pulsanti */
-    .stButton > button {
-        background-color: white !important;
-        color: black !important;
-        border: 1px solid #999 !important;
-        border-radius: 6px;
-    }
-
-    /* Radio button */
-    div[data-baseweb="radio"] label span {
-        color: black !important;
-        font-weight: 600 !important;
-    }
-
-    /* Testo in generale */
-    [data-testid="stText"], [data-testid="stMarkdownContainer"], [data-testid="stHeader"] h1, [data-testid="stHeader"] h2, [data-testid="stHeader"] h3, [data-testid="stHeader"] h4, [data-testid="stHeader"] h5, [data-testid="stHeader"] h6 {
-        color: black !important;
-    }
-
-    /* Aggiunta per il tema scuro */
-    .stApp {
-        background-color: white;
-        color: black;
-    }
-
-    .st-emotion-cache-1c99r31 { /* Selettore per sidebar e altri elementi */
-         background-color: white !important;
-    }
-
+        header [data-testid="theme-toggle"] {
+            display: none;
+        }
     </style>
 """, unsafe_allow_html=True)
 
