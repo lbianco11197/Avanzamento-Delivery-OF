@@ -5,43 +5,6 @@ from streamlit.components.v1 import html
 
 st.set_page_config(layout="wide")
 
-st.markdown("""
-<style>
-/* Forzare il tema chiaro su tutti gli elementi */
-.stApp, html, body {
-    background-color: white !important;
-    color: black !important;
-}
-
-/* Sovrascritture specifiche per i componenti */
-.st-emotion-cache-1c99r31, .st-emotion-cache-1c99r31 .st-emotion-cache-1v41k6 {
-    background-color: white !important;
-}
-.st-emotion-cache-1c99r31 .st-emotion-cache-1v41k6 .st-emotion-cache-1a6q9k {
-    color: black !important;
-}
-
-/* Selettori più specifici per i componenti del tema scuro */
-[data-theme="dark"] .stApp {
-    background-color: white !important;
-}
-[data-theme="dark"] .st-emotion-cache-1c99r31 {
-    background-color: white !important;
-}
-[data-theme="dark"] [data-testid="stText"], [data-theme="dark"] [data-testid="stMarkdownContainer"] {
-    color: black !important;
-}
-</style>
-""", unsafe_allow_html=True)
-
-st.markdown("""
-    <style>
-        header [data-testid="theme-toggle"] {
-            display: none;
-        }
-    </style>
-""", unsafe_allow_html=True)
-
 
 # --- Titolo ---
 st.title("📊 Avanzamento Produzione Delivery OF - Euroirte s.r.l.")
