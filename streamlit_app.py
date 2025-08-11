@@ -5,6 +5,54 @@ from streamlit.components.v1 import html
 
 st.set_page_config(layout="wide")
 
+# Imposta sfondo bianco e testo nero
+st.markdown("""
+    <style>
+    html, body, [data-testid="stApp"] {
+        background-color: white !important;
+        color: black !important;
+    }
+
+    /* Forza colore dei testi nei menu a discesa */
+    .stSelectbox div[data-baseweb="select"] {
+        background-color: white !important;
+        color: black !important;
+    }
+
+    .stSelectbox span, .stSelectbox label {
+        color: black !important;
+        font-weight: 500;
+    }
+
+    /* Forza stile nelle tabelle */
+    .stDataFrame, .stDataFrame table, .stDataFrame th, .stDataFrame td {
+        background-color: white !important;
+        color: black !important;
+    }
+
+    /* Pulsanti */
+    .stButton > button {
+        background-color: white !important;
+        color: black !important;
+        border: 1px solid #999 !important;
+        border-radius: 6px;
+    }
+
+    /* Radio button */
+    div[data-baseweb="radio"] label span {
+        color: black !important;
+        font-weight: 600 !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+    <style>
+        header [data-testid="theme-toggle"] {
+            display: none;
+        }
+    </style>
+""", unsafe_allow_html=True)
 
 # --- Titolo ---
 st.title("📊 Avanzamento Produzione Delivery OF - Euroirte s.r.l.")
