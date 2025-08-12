@@ -145,26 +145,66 @@ def aggrega(df_in, group_cols):
     out["Resa"] = out["Resa"].round(0)
     return out
 
-# --- Dettaglio Giornaliero ---
+# --- Dettaglio Giornaliero (aggregato) ---
 st.subheader("📆 Dettaglio Giornaliero")
-df_giornaliero = aggrega(df_filtrato, ["Data", "Tecnico"])
-styled_giornaliero = (
-    df_giornaliero.style
-    .applymap(lambda v: "background-color: #ccffcc" if pd.notna(v) and v >= 75 else ("background-color: #ff9999" if pd.notna(v) and v < 75 else ""), subset=["Resa"])
-    .format({"Resa": "{:.0f}%"})
-    .hide(axis="index")
-)
-st.dataframe(styled_giornaliero.hide(axis="index"), use_container_width=True)
 
-# --- Riepilogo Mensile per Tecnico ---
-st.subheader("📆 Riepilogo Mensile per Tecnico")
-df_mensile_raw = df_filtrato.copy()
-df_mensile_raw["Data"] = df_mensile_raw["MeseNome"]
-df_mensile = aggrega(df_mensile_raw, ["Data", "Tecnico"])
-styled_mensile = (
-    df_mensile.style
-    .applymap(lambda v: "background-color: #ccffcc" if pd.notna(v) and v >= 75 else ("background-color: #ff9999" if pd.notna(v) and v < 75 else ""), subset=["Resa"])
-    .format({"Resa": "{:.0f}%"})
-    .hide(axis="index")
+df_giornaliero = (
+    df_filtrato
+    .groupby(["Data", "Tecnico"], as_index=False)
+    .agg(
+        **{
+            "Impianti gestiti": ("Descrizione", "size"),
+            "Impianti espletati": ("Stato", lambda s: (s == "Espletamento OK").sum()),
+        }
+    )
 )
-st.dataframe(styled_mensile, use_container_width=True)
+
+df_giornaliero["Resa"] = (
+    df_giornaliero["Impianti espletati"] / df_giornaliero["Impianti gestiti"] * 100
+).round(0)
+
+# formato data gg/mm/aaaa
+df_giornaliero["Data"] = df_giornaliero["Data"].dt.strftime("%d/%m/%Y")
+
+st.dataframe(
+    df_giornaliero.style
+    .applymap(
+        lambda v: "background-color: #ccffcc" if pd.notna(v) and v >= 75
+        else ("background-color: #ff9999" if pd.notna(v) and v < 75 else ""),
+        subset=["Resa"]
+    )
+    .format({"Resa": "{:.0f}%"} )
+    .hide(axis="index"),
+    use_container_width=True
+)
+
+# --- Riepilogo Mensile per Tecnico (aggregato) ---
+st.subheader("📆 Riepilogo Mensile per Tecnico")
+
+df_mensile = (
+    df_filtrato
+    .assign(Data=df_filtrato["MeseNome"])   # usa nome mese come "Data" di raggruppamento
+    .groupby(["Data", "Tecnico"], as_index=False)
+    .agg(
+        **{
+            "Impianti gestiti": ("Descrizione", "size"),
+            "Impianti espletati": ("Stato", lambda s: (s == "Espletamento OK").sum()),
+        }
+    )
+)
+
+df_mensile["Resa"] = (
+    df_mensile["Impianti espletati"] / df_mensile["Impianti gestiti"] * 100
+).round(0)
+
+st.dataframe(
+    df_mensile.style
+    .applymap(
+        lambda v: "background-color: #ccffcc" if pd.notna(v) and v >= 75
+        else ("background-color: #ff9999" if pd.notna(v) and v < 75 else ""),
+        subset=["Resa"]
+    )
+    .format({"Resa": "{:.0f}%"} )
+    .hide(axis="index"),
+    use_container_width=True
+)
