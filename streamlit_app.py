@@ -123,6 +123,10 @@ if giorno_sel != "Tutti":
 if tecnico_sel != "Tutti":
     df_filtrato = df_filtrato[df_filtrato["Tecnico"] == tecnico_sel]
 
+# 🆕 Normalizzazione della data (qui!)
+df_filtrato["Data"] = pd.to_datetime(df_filtrato["Data"], errors="coerce", dayfirst=True)
+df_filtrato["Data"] = df_filtrato["Data"].dt.normalize()
+
 # --- Aggregazione ---
 def aggrega(df_in, group_cols):
     if df_in.empty:
