@@ -73,7 +73,7 @@ def load_data():
     )
     df = df.rename(columns={
         "Data Chiusura": "Data",
-        "Tecnico (TechnicianName)": "Tecnico"
+        "Tecnico": "Tecnico"
     })
     df = df[df["Descrizione"] == "Attivazione con Appuntamento"].copy()
     df["Data"] = pd.to_datetime(df["Data"], errors="coerce", dayfirst=True)
