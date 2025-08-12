@@ -7,51 +7,57 @@ st.set_page_config(layout="wide")
 
 # Imposta sfondo bianco e testo nero
 st.markdown("""
-    <style>
-    html, body, [data-testid="stApp"] {
-        background-color: white !important;
-        color: black !important;
-    }
+<style>
+/* Impone schema colore chiaro anche se il device è in dark */
+:root { color-scheme: light !important; }
+@media (prefers-color-scheme: dark) {
+  :root { color-scheme: light !important; }
+}
 
-    /* Forza colore dei testi nei menu a discesa */
-    .stSelectbox div[data-baseweb="select"] {
-        background-color: white !important;
-        color: black !important;
-    }
+/* Contenitore principale, header, sidebar */
+[data-testid="stAppViewContainer"],
+[data-testid="stHeader"],
+[data-testid="stSidebar"] {
+  background: #fff !important;
+  color: #000 !important;
+}
 
-    .stSelectbox span, .stSelectbox label {
-        color: black !important;
-        font-weight: 500;
-    }
+/* Testi generali */
+html, body, [data-testid="stApp"] { background:#fff !important; color:#000 !important; }
 
-    /* Forza stile nelle tabelle */
-    .stDataFrame, .stDataFrame table, .stDataFrame th, .stDataFrame td {
-        background-color: white !important;
-        color: black !important;
-    }
+/* Selectbox / multiselect (BaseWeb) */
+div[data-baseweb="select"] {
+  background:#fff !important;
+  color:#000 !important;
+}
+div[data-baseweb="select"] * { color:#000 !important; }
 
-    /* Pulsanti */
-    .stButton > button {
-        background-color: white !important;
-        color: black !important;
-        border: 1px solid #999 !important;
-        border-radius: 6px;
-    }
+/* Input, textarea, date input */
+input, textarea, select {
+  background:#fff !important;
+  color:#000 !important;
+}
 
-    /* Radio button */
-    div[data-baseweb="radio"] label span {
-        color: black !important;
-        font-weight: 600 !important;
-    }
-    </style>
-""", unsafe_allow_html=True)
+/* Pulsanti */
+.stButton > button {
+  background:#fff !important;
+  color:#000 !important;
+  border:1px solid #999 !important;
+  border-radius:6px;
+}
 
-st.markdown("""
-    <style>
-        header [data-testid="theme-toggle"] {
-            display: none;
-        }
-    </style>
+/* Tabelle: st.dataframe / st.table */
+.stDataFrame [role="grid"],
+.stTable,
+.stDataFrame table,
+.stDataFrame th, .stDataFrame td {
+  background:#fff !important;
+  color:#000 !important;
+}
+
+/* Nasconde lo switch tema se presente */
+header [data-testid="theme-toggle"] { display:none; }
+</style>
 """, unsafe_allow_html=True)
 
 # --- Titolo ---
