@@ -69,7 +69,7 @@ st.link_button("🏠 Torna alla Home", url="https://homeeuroirte.streamlit.app/"
 def load_data():
     df = pd.read_excel(
         "deliveryopenfiber.xlsx",
-        usecols=["Data Chiusura", "Tecnico (TechnicianName)", "Stato", "Descrizione"]
+        usecols=["Data Chiusura", "Tecnico", "Stato", "Descrizione"]
     )
     df = df.rename(columns={
         "Data Chiusura": "Data",
