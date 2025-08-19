@@ -99,7 +99,7 @@ def load_data():
     df["DataStr"] = df["Data"].dt.strftime("%d/%m/%Y")
     df = pulisci_tecnici(df)  
   
-  mesi_italiani = {
+    mesi_italiani = {
         1: "Gennaio", 2: "Febbraio", 3: "Marzo", 4: "Aprile",
         5: "Maggio", 6: "Giugno", 7: "Luglio", 8: "Agosto",
         9: "Settembre", 10: "Ottobre", 11: "Novembre", 12: "Dicembre"
