@@ -92,6 +92,14 @@ def load_data():
     }
     df["MeseNome"] = df["Data"].dt.month.map(mesi_italiani)
     return df
+   # Normalizza i nomi tecnici:
+    df["Tecnico"] = (
+        df["Tecnico"]
+        .astype(str)                      # forza a stringa
+        .str.strip()                      # rimuove spazi iniziali/finali
+        .str.replace(r"\s+", " ", regex=True)  # rimuove spazi doppi
+        .str.upper()                      # tutto maiuscolo
+    )
 
 df = load_data()
 if df.empty:
