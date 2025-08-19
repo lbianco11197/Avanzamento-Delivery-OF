@@ -70,7 +70,19 @@ st.image("LogoEuroirte.jpg", width=180)
 # Bottone sotto il logo
 st.link_button("🏠 Torna alla Home", url="https://homeeuroirte.streamlit.app/")
 
-
+def pulisci_tecnici(df):
+    """Rimuove righe senza tecnico e normalizza i nomi"""
+    df["Tecnico"] = (
+        df["Tecnico"]
+        .astype(str)
+        .str.strip()
+        .str.replace(r"\s+", " ", regex=True)
+        .str.upper()
+    )
+    # Esclude righe vuote o con 'NAN'
+    df = df[df["Tecnico"].notna() & (df["Tecnico"] != "") & (df["Tecnico"] != "NAN")]
+    return df
+  
 # --- Caricamento dati dal file nel repo ---
 def load_data():
     df = pd.read_excel(
@@ -85,17 +97,9 @@ def load_data():
     df["Data"] = pd.to_datetime(df["Data"], errors="coerce", dayfirst=True)
     df = df.dropna(subset=["Data"])
     df["DataStr"] = df["Data"].dt.strftime("%d/%m/%Y")
-
-  # Normalizza i nomi tecnici:
-    df["Tecnico"] = (
-        df["Tecnico"]
-        .astype(str)                      # forza a stringa
-        .str.strip()                      # rimuove spazi iniziali/finali
-        .str.replace(r"\s+", " ", regex=True)  # rimuove spazi doppi
-        .str.upper()                      # tutto maiuscolo
-    )
+    df = pulisci_tecnici(df)  
   
-    mesi_italiani = {
+  mesi_italiani = {
         1: "Gennaio", 2: "Febbraio", 3: "Marzo", 4: "Aprile",
         5: "Maggio", 6: "Giugno", 7: "Luglio", 8: "Agosto",
         9: "Settembre", 10: "Ottobre", 11: "Novembre", 12: "Dicembre"
