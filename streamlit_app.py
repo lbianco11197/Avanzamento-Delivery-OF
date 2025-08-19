@@ -85,6 +85,16 @@ def load_data():
     df["Data"] = pd.to_datetime(df["Data"], errors="coerce", dayfirst=True)
     df = df.dropna(subset=["Data"])
     df["DataStr"] = df["Data"].dt.strftime("%d/%m/%Y")
+
+  # Normalizza i nomi tecnici:
+    df["Tecnico"] = (
+        df["Tecnico"]
+        .astype(str)                      # forza a stringa
+        .str.strip()                      # rimuove spazi iniziali/finali
+        .str.replace(r"\s+", " ", regex=True)  # rimuove spazi doppi
+        .str.upper()                      # tutto maiuscolo
+    )
+  
     mesi_italiani = {
         1: "Gennaio", 2: "Febbraio", 3: "Marzo", 4: "Aprile",
         5: "Maggio", 6: "Giugno", 7: "Luglio", 8: "Agosto",
@@ -100,15 +110,6 @@ if df.empty:
     st.stop()
 
 st.markdown(f"🗓️ **Dati aggiornati al:** {df['Data'].max().strftime('%d/%m/%Y')}")
-
-# Normalizza i nomi tecnici:
-    df["Tecnico"] = (
-        df["Tecnico"]
-        .astype(str)                      # forza a stringa
-        .str.strip()                      # rimuove spazi iniziali/finali
-        .str.replace(r"\s+", " ", regex=True)  # rimuove spazi doppi
-        .str.upper()                      # tutto maiuscolo
-    )
 
 # --- Filtri ---
 ordine_mesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
