@@ -144,6 +144,13 @@ if giorno_sel != "Tutti":
 if tecnico_sel != "Tutti":
     df_filtrato = df_filtrato[df_filtrato["Tecnico"] == tecnico_sel]
 
+# 👇 Base per il riepilogo mensile: applica SOLO mese e tecnico, NON il giorno
+df_month_base = df.copy()
+if tmese != "Tutti":
+    df_month_base = df_month_base[df_month_base["MeseNome"] == tmese]
+if tecnico_sel != "Tutti":
+    df_month_base = df_month_base[df_month_base["Tecnico"] == tecnico_sel]
+
 # 🆕 Normalizzazione della data (qui!)
 df_filtrato["Data"] = pd.to_datetime(df_filtrato["Data"], errors="coerce", dayfirst=True)
 df_filtrato["Data"] = df_filtrato["Data"].dt.normalize()
@@ -203,12 +210,12 @@ st.dataframe(
     use_container_width=True
 )
 
-# --- Riepilogo Mensile per Tecnico (aggregato) ---
+# --- Riepilogo Mensile per Tecnico (INDIPENDENTE dal giorno) ---
 st.subheader("📆 Riepilogo Mensile per Tecnico")
 
 df_mensile = (
-    df_filtrato
-    .assign(Data=df_filtrato["MeseNome"])   # usa nome mese come "Data" di raggruppamento
+    df_month_base
+    .assign(Data=df_month_base["MeseNome"])  # Data = nome mese
     .groupby(["Data", "Tecnico"], as_index=False)
     .agg(
         **{
