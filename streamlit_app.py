@@ -1,64 +1,50 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-from streamlit.components.v1 import html
+from streamlit.components.v1 import htmlimport base64
+from pathlib import Path
+
+def set_page_background(image_path: str):
+    """Imposta un'immagine di sfondo full-screen come background dell'app Streamlit."""
+    p = Path(image_path)
+    if not p.exists():
+        st.warning(f"Background non trovato: {image_path}")
+        return
+    encoded = base64.b64encode(p.read_bytes()).decode()
+    css = f"""
+    <style>
+    [data-testid="stAppViewContainer"] {{
+        background: url("data:image/png;base64,{encoded}") center/cover no-repeat fixed;
+    }}
+    [data-testid="stHeader"], [data-testid="stSidebar"] {{
+        background-color: rgba(255,255,255,0.0) !important;
+    }}
+    html, body, [data-testid="stApp"] {{
+        color: #0b1320 !important;
+    }}
+    .stDataFrame, .stTable, .stSelectbox div[data-baseweb="select"],
+    .stTextInput, .stNumberInput, .stDateInput, .stMultiSelect,
+    .stRadio, .stCheckbox, .stSlider, .stFileUploader, .stTextArea {{
+        background-color: rgba(255,255,255,0.88) !important;
+        border-radius: 10px;
+        backdrop-filter: blur(0.5px);
+    }}
+    .stDataFrame table, .stDataFrame th, .stDataFrame td {{
+        color: #0b1320 !important;
+        background-color: rgba(255,255,255,0.0) !important;
+    }}
+    .stButton > button, .stDownloadButton > button, .stLinkButton > a {{
+        background-color: #ffffff !important;
+        color: #0b1320 !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 8px;
+    }}
+    </style>
+    """
+    st.markdown(css, unsafe_allow_html=True)
 
 st.set_page_config(layout="wide")
-
-# Imposta sfondo bianco e testo nero
-st.markdown("""
-<style>
-/* Impone schema colore chiaro anche se il device è in dark */
-:root { color-scheme: light !important; }
-@media (prefers-color-scheme: dark) {
-  :root { color-scheme: light !important; }
-}
-
-/* Contenitore principale, header, sidebar */
-[data-testid="stAppViewContainer"],
-[data-testid="stHeader"],
-[data-testid="stSidebar"] {
-  background: #fff !important;
-  color: #000 !important;
-}
-
-/* Testi generali */
-html, body, [data-testid="stApp"] { background:#fff !important; color:#000 !important; }
-
-/* Selectbox / multiselect (BaseWeb) */
-div[data-baseweb="select"] {
-  background:#fff !important;
-  color:#000 !important;
-}
-div[data-baseweb="select"] * { color:#000 !important; }
-
-/* Input, textarea, date input */
-input, textarea, select {
-  background:#fff !important;
-  color:#000 !important;
-}
-
-/* Pulsanti */
-.stButton > button {
-  background:#fff !important;
-  color:#000 !important;
-  border:1px solid #999 !important;
-  border-radius:6px;
-}
-
-/* Tabelle: st.dataframe / st.table */
-.stDataFrame [role="grid"],
-.stTable,
-.stDataFrame table,
-.stDataFrame th, .stDataFrame td {
-  background:#fff !important;
-  color:#000 !important;
-}
-
-/* Nasconde lo switch tema se presente */
-header [data-testid="theme-toggle"] { display:none; }
-</style>
-""", unsafe_allow_html=True)
+set_page_background("sfondo.png")  # 👈 nome del file PNG che vuoi usare come sfondo
 
 # --- Titolo ---
 st.title("📊 Avanzamento Produzione Delivery OF - Euroirte s.r.l.")
