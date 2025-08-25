@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-from streamlit.components.v1 import htmlimport base64
+from streamlit.components.v1 import html
+import base64
 from pathlib import Path
 
 def set_page_background(image_path: str):
