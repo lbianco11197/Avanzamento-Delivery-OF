@@ -191,7 +191,7 @@ df_giornaliero["Data"] = df_giornaliero["Data"].dt.strftime("%d/%m/%Y")
 
 st.dataframe(
     df_giornaliero.style
-    .applymap(
+    .map(
         lambda v: "background-color: #ccffcc" if pd.notna(v) and v >= 75
         else ("background-color: #ff9999" if pd.notna(v) and v < 75 else ""),
         subset=["Resa"]
@@ -222,7 +222,7 @@ df_mensile["Resa"] = (
 
 st.dataframe(
     df_mensile.style
-    .applymap(
+    .map(
         lambda v: "background-color: #ccffcc" if pd.notna(v) and v >= 75
         else ("background-color: #ff9999" if pd.notna(v) and v < 75 else ""),
         subset=["Resa"]
